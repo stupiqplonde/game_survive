@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Выживание на арене</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container" id="gameContainer">
+        <!-- В шапку с ресурсами добавить время -->
+<header class="game-header">
+    <div class="resources">
+        <div class="resource-item" id="proviziya">🍞  <span>99</span></div>
+        <div class="resource-item" id="toplivo">⛽  <span>99</span></div>
+        <div class="resource-item" id="instrumenty">🔧  <span>99</span></div>
+    </div>
+    <div class="header-center">
+        <div class="game-time" id="gameTime">12:00:00</div>
+    </div>
+    <div class="header-right">
+        <span id="currentHeroName">Герой: Не выбран</span>
+    </div>
+</header>
+        </header>
+
+        <!-- Основное рабочее поле (экраны) -->
+        <main class="game-screen" id="gameScreen">
+            <!-- Экран 1: Главное меню (Локации) -->
+            <div class="screen active" id="screenLobby">
+                <h2>Выбор локации</h2>
+                <div class="locations-grid">
+                    <div class="location-card" data-location="forest">
+                        <h3>Лес</h3>
+                        <p>Стоимость: 🍞 1 провизия</p>
+                        <button class="start-match-btn" data-cost-type="proviziya">Начать</button>
+                    </div>
+                    <div class="location-card" data-location="desert">
+                        <h3>Пустыня</h3>
+                        <p>Стоимость: ⛽ 1 топливо</p>
+                        <button class="start-match-btn" data-cost-type="toplivo">Начать</button>
+                    </div>
+                    <div class="location-card" data-location="factory">
+                        <h3>Завод</h3>
+                        <p>Стоимость: 🔧 1 инструменты</p>
+                        <button class="start-match-btn" data-cost-type="instrumenty">Начать</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Экран 2: Герои -->
+            <div class="screen" id="screenHeroes">
+                <h2>Герои</h2>
+                <div class="heroes-list" id="heroesList">
+                    <!-- Сюда будут динамически добавляться герои -->
+                </div>
+            </div>
+
+            <!-- Экран 3: Магазин -->
+            <div class="screen" id="screenShop">
+                <h2>Магазин</h2>
+                <div class="shop-grid" id="shopItems">
+                    <!-- Товары магазина -->
+                </div>
+            </div>
+
+            <!-- Экран 4: Крафт -->
+            <div class="screen" id="screenCraft">
+                <h2>Крафт</h2>
+                <div class="craft-grid" id="craftRecipes">
+                    <!-- Рецепты крафта -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Нижняя навигация -->
+        <nav class="game-nav">
+            <button class="nav-btn active" data-screen="lobby">🏠 Локации</button>
+            <button class="nav-btn" data-screen="heroes">⚔️ Герои</button>
+            <button class="nav-btn" data-screen="shop">🛒 Магазин</button>
+            <button class="nav-btn" data-screen="craft">🔨 Крафт</button>
+        </nav>
+    </div>
+
+    <!-- Модальное окно (для инвентаря/экипировки позже) -->
+    <div class="modal" id="heroModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="js/core/GameState.js"></script>
+    <script src="js/core/Hero.js"></script>
+    <script src="js/core/Item.js"></script>
+    <script src="js/core/Achievements.js"></script>
+    <script src="js/core/QuestSystem.js"></script>
+    <script src="js/core/Warehouse.js"></script>
+    <script src="js/core/CustomCraftSystem.js"></script>
+    <script src="js/ui/TimeManager.js"></script>
+    <script src="js/ui/SoundManager.js"></script>
+    <script src="js/ui/UIManager.js"></script>
+    <script src="js/ui/HeroScreen.js"></script>
+    <script src="js/ui/ModalManager.js"></script>
+    <script src="js/game.js"></script>
+</body>
+    
+</body>
+</html>

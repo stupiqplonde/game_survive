@@ -1,0 +1,660 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+    user-select: none; /* Чтобы текст не выделялся как на мобилках */
+}
+
+body {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden; /* отключаем скролл на теле */
+    background-color: #050505;
+    color: white;
+}
+
+.game-container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Шапка с ресурсами */
+.game-header {
+    background-color: #000000;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #0f3460;
+    flex-shrink: 0; /* Не даем сжиматься */
+}
+
+.resources {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.resource-item {
+    background: #081627;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 1rem;
+}
+
+/* Основной экран */
+.game-screen {
+    flex: 1; /* Занимает всё доступное место */
+    overflow: hidden; /* Индивидуальные экраны скроллятся внутри если надо */
+    background-color: #000000;
+    position: relative;
+}
+
+/* Все экраны по умолчанию скрыты */
+.screen {
+    display: none;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto; /* Если контента много - скроллим внутри, а не всю страницу */
+    padding: 20px;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* Сетки для карточек */
+.locations-grid, .heroes-list, .shop-grid, .craft-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 10px 0;
+}
+
+/* Карточки */
+.location-card, .hero-card, .shop-item, .craft-item {
+    background: #0b101f;
+    border: 1px solid #091625;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+}
+
+button {
+    background: #e94560;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 10px;
+    width: 100%;
+}
+
+button:hover {
+    background: #ff6b8b;
+}
+
+/* Нижняя навигация */
+.game-nav {
+    display: flex;
+    justify-content: space-around;
+    background-color: #000000;
+    padding: 10px;
+    border-top: 2px solid #0f3460;
+    flex-shrink: 0;
+}
+
+.nav-btn {
+    background: transparent;
+    border: none;
+    color: #a0a0a0;
+    font-size: 1.2rem;
+    padding: 10px;
+    width: auto;
+}
+
+.nav-btn.active {
+    color: #e94560;
+    border-bottom: 2px solid #e94560;
+}
+
+/* Модальное окно */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #16213e;
+    margin: 5% auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 10px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    color: white;
+}
+
+.close-modal:hover {
+    color: #e94560;
+}
+
+/* Адаптация для телефонов */
+@media (max-width: 600px) {
+    .game-header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .resources {
+        justify-content: center;
+    }
+    
+    .nav-btn {
+        font-size: 0.9rem;
+        padding: 5px;
+    }
+    
+    .locations-grid, .heroes-list, .shop-grid, .craft-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .modal-content {
+        margin: 10% auto;
+        width: 95%;
+        padding: 15px;
+    }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 400px) {
+    .resource-item {
+        font-size: 0.9rem;
+        padding: 3px 10px;
+    }
+    
+    .nav-btn {
+        font-size: 0.8rem;
+    }
+}
+
+/* Стили для времени */
+.game-time {
+    background: #081627;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+    0% { text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+    50% { text-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
+    100% { text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+}
+
+.header-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media (max-width: 600px) {
+    .header-center {
+        order: 3;
+        margin-top: 10px;
+    }
+}
+
+/* Стили для уведомлений достижений */
+.achievement-notification {
+    position: fixed;
+    top: 20px;
+    right: -300px;
+    background: linear-gradient(135deg, #ffd700, #ffa500);
+    color: #000;
+    padding: 15px 20px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+    z-index: 2000;
+    transition: right 0.5s ease;
+}
+
+.achievement-notification.show {
+    right: 20px;
+}
+
+.achievement-icon {
+    font-size: 2rem;
+}
+
+.achievement-name {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.achievement-desc {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* Стили для заданий */
+.quests-panel {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.quest-item {
+    background: #0f3460;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.quest-item.completed {
+    opacity: 0.7;
+    background: #1a4d2e;
+}
+
+.quest-name {
+    font-weight: bold;
+    color: #ffd700;
+    margin-bottom: 5px;
+}
+
+.quest-desc {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.quest-progress {
+    height: 20px;
+    background: #1a1a2e;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.quest-progress .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #8BC34A);
+    transition: width 0.3s ease;
+}
+
+.quest-progress span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 0.8rem;
+    text-shadow: 0 0 2px black;
+}
+
+.quest-notification {
+    position: fixed;
+    top: 80px;
+    right: -300px;
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 5px 20px rgba(76, 175, 80, 0.3);
+    z-index: 2000;
+    transition: right 0.5s ease;
+}
+
+.quest-notification.show {
+    right: 20px;
+}
+
+.quest-completed {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+/* Стили для склада */
+.warehouse-stats {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.warehouse-item {
+    flex: 1;
+    min-width: 150px;
+    background: #0f3460;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+}
+
+.warehouse-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.warehouse-name {
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.warehouse-bar {
+    height: 20px;
+    background: #1a1a2e;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.warehouse-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+    transition: width 0.3s ease;
+}
+
+.warehouse-value {
+    font-size: 0.9rem;
+    color: #FFD700;
+}
+
+/* Стили для героев */
+.hero-card {
+    background: #0b101f;
+    border: 2px solid #16213e;
+    border-radius: 15px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(233, 69, 96, 0.2);
+}
+
+.hero-card.selected {
+    border-color: #e94560;
+    box-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
+}
+
+.hero-card.selected::before {
+    content: '✓';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #4CAF50;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.hero-type {
+    font-size: 0.9rem;
+    color: #a0a0a0;
+    margin-bottom: 10px;
+}
+
+.hero-level {
+    color: #ffd700;
+    font-size: 0.9rem;
+}
+
+.hero-stats {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    background: #16213e;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+/* Полоска опыта */
+.hero-exp {
+    margin: 15px 0;
+}
+
+.exp-bar {
+    height: 10px;
+    background: #1a1a2e;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.exp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #8BC34A);
+    transition: width 0.3s ease;
+}
+
+.exp-text {
+    font-size: 0.8rem;
+    color: #a0a0a0;
+    margin-top: 5px;
+    text-align: center;
+}
+
+/* Очки навыков */
+.skill-points {
+    background: #ffd700;
+    color: #1a1a2e;
+    padding: 5px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.hero-actions button {
+    flex: 1;
+    padding: 8px;
+    font-size: 0.9rem;
+}
+
+/* Инвентарь */
+.inventory-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.inventory-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.inventory-slot {
+    width: 80px;
+    height: 80px;
+    background: #1a1a2e;
+    border: 2px solid #16213e;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.inventory-slot.filled {
+    background: #0f3460;
+    border-color: #e94560;
+}
+
+.inventory-slot.filled:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(233, 69, 96, 0.3);
+}
+
+.inventory-slot.empty {
+    opacity: 0.5;
+}
+
+.inventory-slot .item-icon {
+    font-size: 1.5rem;
+    margin-bottom: 2px;
+}
+
+.inventory-slot .item-name {
+    font-size: 0.7rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70px;
+}
+
+/* Экипировка */
+.equipment-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.equipment-slot {
+    background: #1a1a2e;
+    border: 2px solid #16213e;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.equipment-slot.filled {
+    border-color: #4CAF50;
+}
+
+.slot-label {
+    font-weight: bold;
+    color: #ffd700;
+    margin-bottom: 10px;
+}
+
+.slot-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.unequip-btn {
+    background: #e94560;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.unequip-btn:hover {
+    background: #ff6b8b;
+}
+
+/* Пассивная информация */
+.passive-info {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 20px;
+    text-align: center;
+    border-left: 4px solid #ffd700;
+}
+
+.passive-info p {
+    color: #ffd700;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Анимации */
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+.passive-info {
+    animation: pulse 2s infinite;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 600px) {
+    .inventory-slot {
+        width: 60px;
+        height: 60px;
+        font-size: 0.7rem;
+    }
+    
+    .inventory-slot .item-icon {
+        font-size: 1.2rem;
+    }
+    
+    .hero-actions {
+        flex-direction: column;
+    }
+    
+    .hero-stats {
+        gap: 8px;
+    }
+    
+    .stat-item {
+        padding: 3px 8px;
+        font-size: 0.8rem;
+    }
+}
