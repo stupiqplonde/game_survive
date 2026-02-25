@@ -87,6 +87,11 @@ const GameState = {
     getCurrentHero() {
         return this.heroes.find(h => h && h.id === this.currentHeroId);
     },
+
+    initShop() {
+        this.shop = new window.Shop();
+        this.notify();
+    },
     
     selectHero(heroId) {
         this.currentHeroId = heroId;

@@ -70,6 +70,16 @@ function createTestItems() {
             statsBonus: {},
             effect: { type: 'exp', value: 50 },
             icon: '📚'
+        },
+        {
+           id: 'item7',
+            name: 'Щит',
+            type: 'Shield',
+            rarity: 'common',
+            price: 80,
+            statsBonus: {},
+            effect: { defense: 10 },
+            icon: '🛡️' 
         }
     ];
 }

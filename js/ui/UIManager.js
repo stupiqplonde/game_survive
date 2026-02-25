@@ -20,6 +20,7 @@ class UIManager {
         this.initEventListeners();
         this.subscribeToState();
         this.updateResourcesUI();
+        this.renderHeroes();
         
         // Небольшая задержка для рендера героев, чтобы GameState успел загрузиться
         setTimeout(() => this.renderHeroes(), 100);
