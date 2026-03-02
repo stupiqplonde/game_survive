@@ -2,37 +2,43 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <!-- Важно для мобильных устройств: запрещаем масштабирование, чтобы интерфейс выглядел как приложение -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Выживание на арене</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="arena_style.css">
 </head>
 <body>
+    <!-- game-container - главный контейнер, который занимает 100% экрана -->
     <div class="game-container" id="gameContainer">
-        <!-- В шапку с ресурсами добавить время -->
-<header class="game-header">
-    <div class="resources">
-        <div class="resource-item" id="proviziya">🍞  <span>99</span></div>
-        <div class="resource-item" id="toplivo">⛽  <span>99</span></div>
-        <div class="resource-item" id="instrumenty">🔧  <span>99</span></div>
-    </div>
-    <div class="header-center">
-        <div class="game-time" id="gameTime">12:00:00</div>
-    </div>
-    <div class="header-right">
-        <span id="currentHeroName">Герой: Не выбран</span>
-    </div>
-</header>
+
+        <!-- ШАПКА (Header) -->
+        <!-- Здесь всегда отображаются ресурсы игрока и текущий герой -->
+        <header class="game-header">
+            <div class="resources">
+                <!-- resource-item - блок с иконкой и количеством ресурса. У каждого свой ID для обновления через JS -->
+                <div class="resource-item" id="proviziya">🍞 <span>0</span></div>
+                <div class="resource-item" id="toplivo">⛽ <span>0</span></div>
+                <div class="resource-item" id="instrumenty">🔧 <span>0</span></div>
+            </div>
+            <div class="header-right">
+                <span id="currentHeroName">Герой: Не выбран</span>
+            </div>
         </header>
 
-        <!-- Основное рабочее поле (экраны) -->
+        <!-- ОСНОВНАЯ РАБОЧАЯ ОБЛАСТЬ (Main) -->
+        <!-- Здесь будет отображаться либо экран локаций, либо героев, либо магазин -->
         <main class="game-screen" id="gameScreen">
-            <!-- Экран 1: Главное меню (Локации) -->
+            <!-- Каждый экран - это отдельный блок с классом .screen -->
+            <!-- Экран Лобби (Локации) активен по умолчанию -->
             <div class="screen active" id="screenLobby">
                 <h2>Выбор локации</h2>
                 <div class="locations-grid">
+                    <!-- data-атрибуты хранят информацию о локации. Это удобно для обработчиков событий -->
                     <div class="location-card" data-location="forest">
                         <h3>Лес</h3>
                         <p>Стоимость: 🍞 1 провизия</p>
+                        <!-- data-cost-type говорит нам, какой ресурс тратится -->
                         <button class="start-match-btn" data-cost-type="proviziya">Начать</button>
                     </div>
                     <div class="location-card" data-location="desert">
@@ -48,32 +54,84 @@
                 </div>
             </div>
 
-            <!-- Экран 2: Герои -->
+            <!-- Экран Героев (пока пустой, сюда будут добавляться карточки героев через JS) -->
             <div class="screen" id="screenHeroes">
                 <h2>Герои</h2>
+                <!-- Контейнер для списка героев. Мы будем наполнять его динамически -->
                 <div class="heroes-list" id="heroesList">
-                    <!-- Сюда будут динамически добавляться герои -->
+                    <!-- Сюда будут добавляться герои -->
                 </div>
             </div>
 
-            <!-- Экран 3: Магазин -->
+            <!-- Экран Магазина -->
             <div class="screen" id="screenShop">
                 <h2>Магазин</h2>
                 <div class="shop-grid" id="shopItems">
-                    <!-- Товары магазина -->
+                    <!-- Сюда будут добавляться товары -->
                 </div>
             </div>
 
-            <!-- Экран 4: Крафт -->
+            <!-- Экран Крафта -->
             <div class="screen" id="screenCraft">
                 <h2>Крафт</h2>
                 <div class="craft-grid" id="craftRecipes">
-                    <!-- Рецепты крафта -->
+                    <!-- Сюда будут добавляться рецепты -->
+                </div>
+            </div>
+
+            <div class="screen" id="screenArena">
+                <div class="arena-game-container">
+                    <!-- Верхняя панель с информацией -->
+                    <div class="arena-header">
+                        <div class="arena-stats">
+                            <div class="stat">❤️ <span id="arenaHp">100</span>/<span id="arenaMaxHp">100</span></div>
+                            <div class="stat">⚔️ <span id="arenaAttack">15</span></div>
+                            <div class="stat">⏱️ <span id="arenaTimer">0:00</span></div>
+                            <div class="stat">🎯 Ур. <span id="arenaLevel">1</span></div>
+                        </div>
+                        
+                        <!-- Добавляем прогресс-бар опыта -->
+                        <div class="progress-bar-container">
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="expProgressBar" style="width: 0%"></div>
+                                <span class="progress-text" id="expText">0/100</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Добавляем слоты навыков -->
+                        <div class="arena-skills" id="arenaSkills">
+                            <div class="skill-slot" id="skillSlot1"></div>
+                            <div class="skill-slot" id="skillSlot2"></div>
+                            <div class="skill-slot" id="skillSlot3"></div>
+                            <div class="skill-slot" id="skillSlot4"></div>
+                            <div class="skill-slot" id="skillSlot5"></div>
+                        </div>
+                        
+                        <button class="pause-btn" id="pauseBtn">⏸️</button>
+                    </div>
+
+                    <!-- Canvas для игры -->
+                    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+                    <!-- Джойстик для мобильных устройств -->
+                    <div class="joystick-container" id="joystickContainer">
+                        <div class="joystick-base">
+                            <div class="joystick-thumb" id="joystickThumb"></div>
+                        </div>
+                    </div>
+
+                    <!-- Пауза/меню выхода -->
+                    <div class="pause-menu" id="pauseMenu" style="display: none;">
+                        <h3>Пауза</h3>
+                        <button class="resume-btn" id="resumeBtn">Продолжить</button>
+                        <button class="exit-arena-btn" id="exitArenaBtn">Выйти с арены</button>
+                    </div>
                 </div>
             </div>
         </main>
 
-        <!-- Нижняя навигация -->
+        <!-- НИЖНЯЯ НАВИГАЦИЯ (Nav) -->
+        <!-- Кнопки для переключения между экранами. data-screen указывает, какой экран открыть -->
         <nav class="game-nav">
             <button class="nav-btn active" data-screen="lobby">🏠 Локации</button>
             <button class="nav-btn" data-screen="heroes">⚔️ Герои</button>
@@ -82,7 +140,8 @@
         </nav>
     </div>
 
-    <!-- Модальное окно (для инвентаря/экипировки позже) -->
+    <!-- МОДАЛЬНОЕ ОКНО (для инвентаря и экипировки) -->
+    <!-- Скрыто по умолчанию, будет появляться поверх основного контента -->
     <div class="modal" id="heroModal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
@@ -90,21 +149,22 @@
         </div>
     </div>
 
-    <!-- Подключение скриптов -->
+    <!-- Core классы -->
     <script src="js/core/GameState.js"></script>
-    <script src="js/core/Hero.js"></script>
     <script src="js/core/Item.js"></script>
-    <script src="js/core/Achievements.js"></script>
-    <script src="js/core/QuestSystem.js"></script>
-    <script src="js/core/Warehouse.js"></script>
-    <script src="js/core/CustomCraftSystem.js"></script>
-    <script src="js/ui/TimeManager.js"></script>
-    <script src="js/ui/SoundManager.js"></script>
+    <script src="js/core/Hero.js"></script>
+    <script src="js/core/Shop.js"></script>
+    <script src="js/core/Recipe.js"></script>
+    <script src="js/core/Skill.js"></script>
+
+    <!-- Классы арены - ВАЖНО: GameEntity.js должен быть ПЕРВЫМ среди арены -->
+    <script src="js/arena/GameEntity.js"></script>      <!-- Сначала GameEntity (определяет ArenaHero) -->
+    <script src="js/arena/SpriteManager.js"></script>
+    <script src="js/arena/SurvivorsArena.js"></script>  <!-- Потом SurvivorsArena (использует ArenaHero) -->
+    <script src="js/arena/ArenaController.js"></script>
+
+    <!-- UI -->
     <script src="js/ui/UIManager.js"></script>
-    <script src="js/ui/HeroScreen.js"></script>
-    <script src="js/ui/ModalManager.js"></script>
     <script src="js/game.js"></script>
-</body>
-    
 </body>
 </html>

@@ -1,28 +1,21 @@
+// Базовый класс предмета
 class Item {
-    constructor(id, name, type, rarity, price = 0, statsBonus = {}, effect = null) {
+    constructor(id, name, type, rarity, basePrice, icon = '📦') {
         this.id = id;
         this.name = name;
-        this.type = type; // 'weapon', 'armor', 'accessory', 'consumable'
-        this.rarity = rarity; // 'common', 'rare', 'epic'
-        this.price = price; // цена в магазине
-        this.statsBonus = statsBonus || {}; // { attack: +5, hp: +10 }
-        this.effect = effect; // для расходников: { type: 'heal', value: 30 }
-        this.icon = this.getIcon();
+        this.type = type;
+        this.rarity = rarity;
+        this.basePrice = basePrice;
+        this.icon = icon;
+        this.description = ''; // Будет заполняться в дочерних классах
     }
     
-    getIcon() {
-        const icons = {
-            'weapon': '⚔️',
-            'armor': '🛡️',
-            'accessory': '📿',
-            'consumable': '🧪'
-        };
-        return icons[this.type] || '📦';
+    getPrice() {
+        return this.basePrice;
     }
 }
 
 // Класс оружия
-
 class Weapon extends Item {
     constructor(id, name, rarity, basePrice, stats, icon = '⚔️') {
         super(id, name, 'weapon', rarity, basePrice, icon);
@@ -34,7 +27,6 @@ class Weapon extends Item {
 }
 
 // Класс брони
-
 class Armor extends Item {
     constructor(id, name, rarity, basePrice, stats, icon = '🛡️') {
         super(id, name, 'armor', rarity, basePrice, icon);
@@ -45,7 +37,6 @@ class Armor extends Item {
 }
 
 // Класс расходника
-
 class Consumable extends Item {
     constructor(id, name, rarity, basePrice, effect, value, icon = '💗') {
         super(id, name, 'consumable', rarity, basePrice, icon);
@@ -56,18 +47,7 @@ class Consumable extends Item {
     }
 }
 
-class Shield extends Item {
-    constructor(id, name, rarity, basePrice, stats, icon = '🛡️') {
-        super(id, name, 'shield', rarity, basePrice, icon);
-        this.blockdamage = stats.damage || 0;
-        this.blockSpeed = stats.blockSpeed || 0;
-        this.bonusStats = stats.bonusStats || {};
-        this.description = `Блокирует: ${this.blockdamage}, Периодичность: ${this.blockSpeed}`;
-    }
-}
-
 // Класс материала для крафта
-
 class Material extends Item {
     constructor(id, name, rarity, basePrice, icon = '🔨') {
         super(id, name, 'material', rarity, basePrice, icon);
@@ -77,9 +57,7 @@ class Material extends Item {
 
 // Делаем все классы глобальными
 window.Weapon = Weapon;
-window.Shield = Shield;
 window.Armor = Armor;
 window.Consumable = Consumable;
 window.Material = Material;
-
 window.Item = Item;

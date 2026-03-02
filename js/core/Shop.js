@@ -1,6 +1,4 @@
-// ==============================
 // Класс магазина
-// ==============================
 class Shop {
     constructor() {
         this.items = []; // Все доступные предметы
@@ -11,9 +9,6 @@ class Shop {
         this.initializeShop();
     }
     
-    /**
-     * Инициализация всех предметов в магазине
-     */
     initializeShop() {
         // Создаём предметы
         const items = [
@@ -43,8 +38,6 @@ class Shop {
         this.refreshDailyItems();
     }
 
-    // Обновить ежедневный ассортимент (случайные 6 предметов)
-
     refreshDailyItems() {
         // Перемешиваем и берем 6 случайных предметов
         const shuffled = [...this.items].sort(() => 0.5 - Math.random());
@@ -52,12 +45,6 @@ class Shop {
         this.lastUpdate = Date.now();
     }
 
-        /**
-     * Купить предмет
-     * @param {string} itemId - ID предмета
-     * @param {string} heroId - ID героя, которому покупаем
-     * @returns {Object} - Результат операции {success, message, item}
-     */
     buyItem(itemId, heroId) {
         const item = this.dailyItems.find(i => i.id === itemId);
         if (!item) return { success: false, message: 'Предмет не найден' };
@@ -105,4 +92,5 @@ class Shop {
     }
 }
 
+// Делаем класс глобальным
 window.Shop = Shop;

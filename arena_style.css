@@ -1,0 +1,365 @@
+/* ========== НОВЫЕ СТИЛИ ДЛЯ ВЕРСИИ 6 ========== */
+
+/* Стили для арены */
+.arena-game-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #000;
+    overflow: hidden;
+}
+
+/* Верхняя панель с информацией */
+.arena-header {
+    background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1f 100%);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #e94560;
+    flex-shrink: 0;
+    z-index: 10;
+}
+
+/* Статистика на арене */
+.arena-stats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+    flex: 1;
+}
+
+.arena-stats .stat {
+    background: #16213e;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Прогресс бары */
+.progress-bar-container {
+    background: #16213e;
+    padding: 5px 15px;
+    border-radius: 20px;
+    min-width: 200px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background-color: #2a2a4a;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4aff4a, #00aa00);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.progress-bar-fill.hp {
+    background: linear-gradient(90deg, #ff4a4a, #aa0000);
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px black;
+}
+
+/* Кнопка паузы */
+.pause-btn {
+    background: #e94560;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.pause-btn:hover {
+    background: #ff6b8b;
+    transform: scale(1.1);
+}
+
+/* Canvas для игры - занимает все доступное пространство */
+#gameCanvas {
+    display: block;
+    width: 100%;
+    flex: 1;
+    background: #000;
+    object-fit: cover; /* Растягивается на всю доступную область */
+    min-height: 0; /* Важно для flexbox */
+}
+
+/* Джойстик для мобильных устройств - по умолчанию скрыт */
+.joystick-container {
+    display: none;
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    width: 120px;
+    height: 120px;
+    z-index: 20;
+}
+
+/* Показываем джойстик только на мобильных устройствах и планшетах */
+@media (max-width: 1024px) and (pointer: coarse) {
+    .joystick-container {
+        display: block;
+    }
+}
+
+.joystick-base {
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.joystick-thumb {
+    width: 50px;
+    height: 50px;
+    background: rgba(233, 69, 96, 0.8);
+    border-radius: 50%;
+    transition: transform 0.1s ease;
+}
+
+/* Меню паузы */
+.pause-menu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    z-index: 30;
+    border: 2px solid #e94560;
+    min-width: 300px;
+}
+
+.pause-menu h3 {
+    color: #e94560;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.pause-menu button {
+    width: 100%;
+    margin: 10px 0;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.resume-btn {
+    background: #4aff4a;
+    color: #000;
+}
+
+.resume-btn:hover {
+    background: #6aff6a;
+}
+
+.exit-arena-btn {
+    background: #e94560;
+    color: white;
+}
+
+.exit-arena-btn:hover {
+    background: #ff6b8b;
+}
+
+/* Навыки на арене */
+.arena-skills {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.skill-slot {
+    background: #16213e;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    position: relative;
+    border: 1px solid #0f3460;
+}
+
+.skill-slot.active {
+    border-color: #e94560;
+    box-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
+}
+
+.skill-cooldown {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    background: #e94560;
+    color: white;
+    font-size: 10px;
+    padding: 2px 4px;
+    border-radius: 10px;
+    min-width: 16px;
+    text-align: center;
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 768px) {
+    .arena-stats {
+        gap: 10px;
+    }
+    
+    .progress-bar-container {
+        min-width: 150px;
+    }
+    
+    .arena-stats .stat {
+        padding: 3px 10px;
+        font-size: 0.9rem;
+    }
+    
+    .joystick-container {
+        width: 100px;
+        height: 100px;
+        bottom: 20px;
+        left: 20px;
+    }
+    
+    .joystick-thumb {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* Исправления для мобильной версии */
+@media (max-width: 768px) {
+    /* Фиксируем нижнюю навигацию */
+    .game-nav {
+        position: sticky;
+        bottom: 0;
+        z-index: 100;
+        background-color: #000000;
+        padding: 5px;
+    }
+    
+    .nav-btn {
+        font-size: 0.9rem;
+        padding: 8px 5px;
+    }
+    
+    /* Улучшаем адаптацию canvas */
+    #gameCanvas {
+        min-height: 200px; /* Минимальная высота */
+    }
+    
+    /* Убеждаемся что контейнер арены занимает всю высоту */
+    .arena-game-container {
+        height: 100%;
+    }
+}
+
+/* Портретный режим на мобильных */
+@media (max-width: 768px) and (orientation: portrait) {
+    .arena-header {
+        padding: 5px 10px;
+    }
+    
+    .progress-bar-container {
+        min-width: 120px;
+    }
+    
+    .arena-stats {
+        gap: 5px;
+    }
+    
+    .skill-slot {
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+    }
+}
+
+/* Альбомный режим на мобильных */
+@media (max-width: 1024px) and (orientation: landscape) {
+    .arena-header {
+        padding: 5px 15px;
+    }
+    
+    #gameCanvas {
+        min-height: 300px;
+    }
+}
+
+/* Анимации */
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -20px); }
+    10% { opacity: 1; transform: translate(-50%, 0); }
+    90% { opacity: 1; transform: translate(-50%, 0); }
+    100% { opacity: 0; transform: translate(-50%, -20px); }
+}
+
+/* Улучшенные стили для статистики */
+#arenaKills {
+    font-weight: bold;
+    color: #ffd700;
+}
+
+/* Эффекты для навыков */
+.skill-slot {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.skill-slot::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(233,69,96,0.2) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.skill-slot.active::after {
+    opacity: 1;
+    animation: pulse 2s infinite;
+}

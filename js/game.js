@@ -1,178 +1,174 @@
-// Функция для создания тестовых героев
-function createTestHeroes() {
-    return [
-        new Hero('hero1', 'Торгар', { hp: 120, attack: 18, defense: 12 }, 'warrior'),
-        new Hero('hero2', 'Эльвира', { hp: 80, attack: 22, defense: 6, speed: 15 }, 'archer'),
-        new Hero('hero3', 'Мерлин', { hp: 70, attack: 25, defense: 4 }, 'mage'),
-        new Hero('hero4', 'Шэдоу', { hp: 85, attack: 20, defense: 5, speed: 18 }, 'rogue')
-    ];
-}
+// js/game.js - точка входа в игру
 
-// Создаем тестовые предметы
-function createTestItems() {
-    return [
-        {
-            id: 'item1',
-            name: 'Малое зелье здоровья',
-            type: 'consumable',
-            rarity: 'common',
-            price: 10,
-            statsBonus: {},
-            effect: { type: 'heal', value: 30 },
-            icon: '🧪'
-        },
-        {
-            id: 'item2',
-            name: 'Стальной меч',
-            type: 'weapon',
-            rarity: 'rare',
-            price: 50,
-            statsBonus: { attack: 8 },
-            effect: null,
-            icon: '⚔️'
-        },
-        {
-            id: 'item3',
-            name: 'Кожаная броня',
-            type: 'armor',
-            rarity: 'common',
-            price: 30,
-            statsBonus: { defense: 5 },
-            effect: null,
-            icon: '🛡️'
-        },
-        {
-            id: 'item4',
-            name: 'Кольцо силы',
-            type: 'accessory',
-            rarity: 'rare',
-            price: 40,
-            statsBonus: { attack: 3, defense: 2 },
-            effect: null,
-            icon: '📿'
-        },
-        {
-            id: 'item5',
-            name: 'Большое зелье здоровья',
-            type: 'consumable',
-            rarity: 'rare',
-            price: 25,
-            statsBonus: {},
-            effect: { type: 'heal', value: 75 },
-            icon: '🧪'
-        },
-        {
-            id: 'item6',
-            name: 'Том опыта',
-            type: 'consumable',
-            rarity: 'epic',
-            price: 100,
-            statsBonus: {},
-            effect: { type: 'exp', value: 50 },
-            icon: '📚'
-        },
-        {
-           id: 'item7',
-            name: 'Щит',
-            type: 'Shield',
-            rarity: 'common',
-            price: 80,
-            statsBonus: {},
-            effect: { defense: 10 },
-            icon: '🛡️' 
-        }
-    ];
-}
-
-// Инициализация игры
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('Инициализация игры...');
-    
-    // Проверяем, есть ли сохраненные герои
-    if (!window.GameState.heroes || window.GameState.heroes.length === 0) {
-        console.log('Создаем тестовых героев');
-        window.GameState.heroes = createTestHeroes();
-        
-        // Добавляем предметы первому герою для теста
-        const testItems = createTestItems();
-        if (window.GameState.heroes[0]) {
-            window.GameState.heroes[0].addToInventory(testItems[0]);
-            window.GameState.heroes[0].addToInventory(testItems[1]);
-            window.GameState.heroes[0].addToInventory(testItems[2]);
-        }
-        
-        // Добавляем предметы второму герою
-        if (window.GameState.heroes[1]) {
-            window.GameState.heroes[1].addToInventory(testItems[3]);
-            window.GameState.heroes[1].addToInventory(testItems[4]);
-        }
-        
-        // Выбираем первого героя по умолчанию
-        window.GameState.selectHero('hero1');
-    } else {
-        console.log('Загружены сохраненные герои:', window.GameState.heroes.length);
+// Ждём, пока загрузится DOM, потом выполняем код
+// async означает, что функция будет работать асинхронно
+document.addEventListener('DOMContentLoaded', async () => {
+    // Показываем шапку игры
+    const gameHeader = document.querySelector('.game-header');
+    if (gameHeader) {
+        gameHeader.style.display = 'flex';
+        gameHeader.style.visibility = 'visible';
     }
     
-    // Инициализация UI
-    window.uiManager = new UIManager();
+    // Показываем индикатор загрузки
+    showLoadingIndicator('Загрузка спрайтов из папки images...');
     
-    // Устанавливаем активный экран по умолчанию
-    const lobbyScreen = document.getElementById('screenLobby');
-    if (lobbyScreen) {
-        lobbyScreen.classList.add('active');
+    try {
+        // Создаём менеджер спрайтов и сохраняем его в глобальной переменной
+        window.spriteManager = new SpriteManager();
+        
+        // Загружаем спрайты и ждём, пока они загрузятся (await)
+        await window.spriteManager.loadSprites();
+        
+        // Инициализируем игру
+        initializeGame();
+        
+        // Прячем индикатор загрузки
+        hideLoadingIndicator();
+        
+        // Показываем уведомление об успехе
+        showNotification('✅ Спрайты загружены!', 2000);
+        
+    } catch (error) {
+        // Если произошла ошибка при загрузке спрайтов
+        console.error('Ошибка загрузки:', error);
+        hideLoadingIndicator();
+        
+        // Всё равно запускаем игру (будут использоваться заглушки)
+        initializeGame();
+        showNotification('⚠️ Используются заглушки вместо спрайтов', 3000);
     }
+});
+
+// Функция для показа индикатора загрузки
+function showLoadingIndicator(text) {
+    // Удаляем старый индикатор, если он есть
+    const existing = document.getElementById('loadingIndicator');
+    if (existing) existing.remove();
     
-    // Загрузка сохранения
-    window.GameState.load();
+    // Создаём новый
+    const loader = document.createElement('div');
+    loader.id = 'loadingIndicator';
+    loader.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #16213e;
+        color: #e94560;
+        padding: 20px 40px;
+        border-radius: 10px;
+        z-index: 9999;
+        border: 2px solid #e94560;
+        font-size: 18px;
+        box-shadow: 0 0 30px rgba(233,69,96,0.3);
+    `;
+    loader.textContent = text || 'Загрузка...';
+    document.body.appendChild(loader);
+}
+
+// Функция для скрытия индикатора загрузки
+function hideLoadingIndicator() {
+    const loader = document.getElementById('loadingIndicator');
+    if (loader) {
+        loader.style.opacity = '0';
+        setTimeout(() => loader.remove(), 500);
+    }
+}
+
+// Функция для показа уведомлений
+function showNotification(text, duration) {
+    const notif = document.createElement('div');
+    notif.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #e94560;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        z-index: 10000;
+        animation: fadeInOut ${duration}ms;
+    `;
+    notif.textContent = text;
+    document.body.appendChild(notif);
     
-    // Обновляем обработчики кнопок локаций
-    document.querySelectorAll('.start-match-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const costType = e.target.dataset.costType;
-            const locationCard = e.target.closest('.location-card');
-            const location = locationCard ? locationCard.dataset.location : 'unknown';
-            
-            const currentHero = window.GameState.getCurrentHero();
-            if (!currentHero) {
-                alert('Сначала выберите героя!');
-                return;
-            }
-            
-            if (window.GameState.resources[costType] >= 1) {
-                window.GameState.updateResource(costType, -1);
-                
-                // Добавляем опыт герою за матч
-                if (currentHero.addExp) {
-                    currentHero.addExp(100);
-                }
-                
-                alert(`Матч начат в локации ${location}! 
-Герой ${currentHero.name || 'Неизвестный'} получил 10 опыта.
-Потрачен 1 ${costType}. 
-Ресурсов осталось: ${Math.floor(window.GameState.resources[costType] || 0)}`);
-            } else {
-                alert(`Недостаточно ${costType}!`);
-            }
-        });
+    // Удаляем уведомление через указанное время
+    setTimeout(() => notif.remove(), duration);
+}
+
+// Функция инициализации игры
+function initializeGame() {
+    console.log('🎮 Инициализация игры...');
+    
+    // СОЗДАЁМ ГЕРОЕВ
+    const warrior = new window.Hero('1', 'Воин', { hp: 120, attack: 18, defense: 12, speed: 8 }, 'warrior');
+    const archer = new window.Hero('2', 'Лучник', { hp: 80, attack: 22, defense: 6, speed: 15 }, 'archer');
+    const mage = new window.Hero('3', 'Маг', { hp: 70, attack: 25, defense: 4, speed: 12 }, 'mage');
+    const rogue = new window.Hero('4', 'Разбойник', { hp: 90, attack: 16, defense: 8, speed: 18 }, 'rogue');
+    
+    // Добавляем героев в общее состояние игры
+    window.GameState.heroes.push(warrior, archer, mage, rogue);
+    window.GameState.selectHero('1'); // Выбираем первого героя (Воина)
+    
+    
+    // ИНИЦИАЛИЗИРУЕМ СИСТЕМЫ
+    window.GameState.initShop();      // Магазин
+    window.GameState.initRecipes();   // Крафт
+    window.GameState.initSkills();    // Навыки
+    
+    // ЗАПУСКАЕМ UI
+    window.ui = new window.UIManager();
+    
+    // СОЗДАЁМ КОНТРОЛЛЕР АРЕНЫ
+    window.arenaController = new window.ArenaController();
+    
+    console.log('✅ Игра готова!');
+}
+
+// ОБРАБОТЧИКИ КНОПОК ЛОКАЦИЙ
+document.querySelectorAll('.start-match-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        // Получаем данные о локации из атрибутов data-
+        const location = e.target.closest('.location-card').dataset.location;
+        const costType = e.target.dataset.costType;
+        
+        // Получаем текущего выбранного героя
+        const hero = window.GameState.getCurrentHero();
+        
+        // Проверки
+        if (!hero) {
+            showNotification('❌ Сначала выберите героя!', 2000);
+            return;
+        }
+        
+        if (window.GameState.resources[costType] < 1) {
+            showNotification(`❌ Не хватает ${costType}!`, 2000);
+            return;
+        }
+        
+        // Тратим ресурс
+        window.GameState.updateResource(costType, -1);
+        
+        // Запускаем экспедицию
+        const started = window.arenaController.startExpedition(location, hero);
+        
+        // Если не удалось запустить, возвращаем ресурс
+        if (!started) {
+            window.GameState.updateResource(costType, 1);
+        }
     });
-    
-    // Добавляем информацию о пассивной генерации
-    const lobbyElement = document.querySelector('#screenLobby');
-    if (lobbyElement) {
-        const passiveInfo = document.createElement('div');
-        passiveInfo.className = 'passive-info';
-        passiveInfo.innerHTML = `
-            <p>⏱️ Ресурсы накапливаются автоматически (1/сек)</p>
-        `;
-        lobbyElement.appendChild(passiveInfo);
-    }
-    
-    console.log('Игра запущена! Герои и инвентарь готовы!');
 });
 
-// Сохранение перед закрытием
-window.addEventListener('beforeunload', () => {
-    if (window.GameState) {
-        window.GameState.save();
+// Добавляем CSS-анимацию для уведомлений
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeInOut {
+        0% { opacity: 0; transform: translate(-50%, -20px); }
+        10% { opacity: 1; transform: translate(-50%, 0); }
+        90% { opacity: 1; transform: translate(-50%, 0); }
+        100% { opacity: 0; transform: translate(-50%, -20px); }
     }
-});
+`;
+document.head.appendChild(style);
