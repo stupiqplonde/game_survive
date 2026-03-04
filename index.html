@@ -149,6 +149,13 @@
         </div>
     </div>
 
+    <!-- Конфигурации - сначала загружаем все настройки -->
+    <script src="js/config/heroClasses.js"></script>
+    <script src="js/config/enemyTypes.js"></script>
+    <script src="js/config/weapons.js"></script>
+    <script src="js/config/skills.js"></script>
+    <script src="js/config/locations.js"></script>
+
     <!-- Core классы -->
     <script src="js/core/GameState.js"></script>
     <script src="js/core/Item.js"></script>
@@ -157,10 +164,18 @@
     <script src="js/core/Recipe.js"></script>
     <script src="js/core/Skill.js"></script>
 
-    <!-- Классы арены - ВАЖНО: GameEntity.js должен быть ПЕРВЫМ среди арены -->
-    <script src="js/arena/GameEntity.js"></script>      <!-- Сначала GameEntity (определяет ArenaHero) -->
+    <!-- Шаблоны UI -->
+    <script src="js/ui/templates/heroCard.js"></script>
+    <script src="js/ui/templates/skillChoice.js"></script>
+    <script src="js/ui/templates/inventory.js"></script>
+    <script src="js/ui/templates/shopItem.js"></script>
+    <script src="js/ui/templates/craftItem.js"></script>
+    <script src="js/ui/templates/notification.js"></script>
+
+    <!-- Классы арены -->
+    <script src="js/arena/GameEntity.js"></script>
     <script src="js/arena/SpriteManager.js"></script>
-    <script src="js/arena/SurvivorsArena.js"></script>  <!-- Потом SurvivorsArena (использует ArenaHero) -->
+    <script src="js/arena/SurvivorsArena.js"></script>
     <script src="js/arena/ArenaController.js"></script>
 
     <!-- UI -->
